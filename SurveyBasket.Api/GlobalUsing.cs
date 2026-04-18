@@ -2,5 +2,9 @@
 global using SurveyBasket.Api.Models;
 global using SurveyBasket.Api.Interfaces;
 global using SurveyBasket.Api.Services;
-global using SurveyBasket.Api.Contracts;
-global using SurveyBasket.Api.Mapping;
+global using FluentValidation;
+global using SurveyBasket.Api.Contracts.Polls.Requests;
+global using FluentValidation.AspNetCore;
+global using Mapster;
+global using MapsterMapper;
+global using System.Reflection;
