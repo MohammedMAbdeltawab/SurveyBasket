@@ -2,9 +2,10 @@
 
 public interface IPollService
 {
-    public IEnumerable<Poll> GetAll();
-    public Poll? Get(int Id);
-    public Poll? Add(Poll poll);
-    public bool Update(int Id,Poll poll);
-    public bool Delete(int ID);
+    public Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken);
+    public Task<Poll?> GetAsync(int Id, CancellationToken cancellationToken);
+    public Task<Poll?> AddAsync(Poll poll, CancellationToken cancellationToken);
+    public Task<bool> UpdateAsync(int Id, Poll poll, CancellationToken cancellationToken);
+    public Task<bool> DeleteAsync(int ID, CancellationToken cancellationToken);
+    public Task<bool> TogglePublishStatusAsync(int id, CancellationToken cancellationToken);
 }
