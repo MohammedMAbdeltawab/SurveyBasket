@@ -8,6 +8,6 @@ public class MappingConfigurations : IRegister
     public void Register(TypeAdapterConfig config)
     {
 
-        config.NewConfig<Poll, PollResponse>().Map(dest => dest.Description, src => src.Description);
+        config.NewConfig<Poll, PollResponse>().Map(dest => dest.Summary, src => src.Summary);
     }
 }
