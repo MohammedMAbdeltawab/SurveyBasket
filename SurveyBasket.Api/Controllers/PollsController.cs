@@ -1,7 +1,4 @@
-﻿using SurveyBasket.Api.Contracts.Requests;
-using SurveyBasket.Api.Mapping;
-
-namespace SurveyBasket.Api.Controllers;
+﻿namespace SurveyBasket.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -11,7 +8,9 @@ public class PollsController(IPollService pollService) : ControllerBase
 
     [HttpGet("GetAll")]
     public IActionResult GetAll() {
-        return Ok(_pollService.GetAll().MapToResponse());
+        var polls = _pollService.GetAll();
+        var response = polls.Adapt<IEnumerable<PollResponse>>(); // shouldn't make configuration for IEnumerable Mapster already knows how to map collections
+        return Ok(response);
     }
     [HttpGet("{id}")]
     public IActionResult Get([FromRoute] int id) {
@@ -19,22 +18,30 @@ public class PollsController(IPollService pollService) : ControllerBase
         if (poll is null) {
             return NotFound();
         }
-        return Ok(poll.MapToResponse());
+        //  var config = new TypeAdapterConfig();
+        //config.NewConfig<Poll,PollResponse>().Map(dest=>dest.Notes,src=>src.Description);
+        //var response = poll.Adapt<Poll, PollResponse>(config);
+        var response = poll.Adapt<PollResponse>();
+        return Ok(response);
     }
     [HttpPost("")]
-    public IActionResult Add([FromBody] CreatePollRequest request) { 
-    var newPoll= _pollService.Add(request.MapToPoll());
-        return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll); 
+    public IActionResult Add([FromBody] CreatePollRequest request)
+    {
+        var newPoll = _pollService.Add(request.Adapt<Poll>());
+        return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll.Adapt<PollResponse>());
     }
+
     [HttpPut("{id}")]
-    public IActionResult Update([FromRoute] int id, [FromBody] CreatePollRequest request) {
-        var isUpdated = _pollService.Update(id, request.MapToPoll());
-            return isUpdated ? NoContent() : NotFound();  // Return 204 No Content if updated, 404 Not Found if not found   
+    public IActionResult Update([FromRoute] int id, [FromBody] CreatePollRequest request)
+    {
+        var isUpdated = _pollService.Update(id, request.Adapt<Poll>());
+        return isUpdated ? NoContent() : NotFound();  // Return 204 No Content if updated, 404 Not Found if not found   
     }
 
 
     [HttpDelete("{id}")]
-    public IActionResult Delete([FromRoute] int id) {
+    public IActionResult Delete([FromRoute] int id)
+    {
         var isDeleted = _pollService.Delete(id);
         return isDeleted ? NoContent() : NotFound();
     }

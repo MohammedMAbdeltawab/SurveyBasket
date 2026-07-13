@@ -1,12 +1,10 @@
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Services — configuration phase (builder.*)
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IPollService, PollService>();
-
+builder.Services.AddDependencies();
 
 var app = builder.Build();
 
