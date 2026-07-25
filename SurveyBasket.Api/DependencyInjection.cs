@@ -1,18 +1,37 @@
-﻿namespace SurveyBasket.Api;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Api.Persistence;
+
+namespace SurveyBasket.Api;
 
 public static class DependencyInjection
 {
-    // In Clean Architecture you name it Add + layer: AddApplication, AddInfrastructure, etc.
-    public static IServiceCollection AddDependencies(this IServiceCollection services)
+    public static IServiceCollection AddDependencies(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddControllers();
 
         services
             .AddSwaggerServices()
             .AddMapsterConf()
-            .AddFluentValidationConf();
+            .AddFluentValidationConf()
+            .AddPersistence(configuration);
 
         services.AddScoped<IPollService, PollService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddPersistence(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
 
         return services;
     }

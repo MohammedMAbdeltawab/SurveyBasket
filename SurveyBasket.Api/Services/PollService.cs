@@ -1,37 +1,61 @@
-﻿namespace SurveyBasket.Api.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Api.Entities;
+using SurveyBasket.Api.Persistence;
 
-public class PollService : IPollService
+namespace SurveyBasket.Api.Services;
+
+public class PollService(ApplicationDbContext context) : IPollService
 {
-    private readonly static List<Poll> _polls = [
-        new Poll{Id=1, Title="Poll 1", Description="Description 1"},
-        new Poll{Id=2, Title="Poll 2", Description="Description 2"},     
-        new Poll{Id=3, Title="Poll 3", Description="Description 3"}     
-        ];
+    private readonly ApplicationDbContext _context = context;
 
-    public Poll Add(Poll newPoll)
+    public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await _context.Polls.AsNoTracking().ToListAsync(cancellationToken);
+
+    public async Task<Poll?> GetAsync(int id, CancellationToken cancellationToken = default) =>
+        await _context.Polls.FindAsync([id], cancellationToken);
+
+    public async Task<Poll> AddAsync(Poll poll, CancellationToken cancellationToken = default)
     {
-        newPoll.Id = _polls.Max(p => p.Id) + 1;
-        _polls.Add(newPoll);
-        return newPoll;
+        await _context.Polls.AddAsync(poll, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return poll;
     }
 
-    public bool Delete(int id)
+    public async Task<bool> UpdateAsync(int id, Poll poll, CancellationToken cancellationToken = default)
     {
-        var poll=Get(id); ;
-        if (poll is null) { return false; }
-        return _polls.Remove(poll);
-    }
+        var currentPoll = await GetAsync(id, cancellationToken);
+        if (currentPoll is null)
+            return false;
 
-    public Poll? Get(int id)=>_polls.SingleOrDefault(p => p.Id == id);
-
-    public IEnumerable<Poll> GetAll() => _polls;
-
-    public bool Update(int id, Poll poll)
-    {
-       var currentPoll = Get(id);
-        if (currentPoll is null) { return false; }
         currentPoll.Title = poll.Title;
-        currentPoll.Description = poll.Description;
-                return true;
+        currentPoll.Summary = poll.Summary;
+        currentPoll.IsPublished = poll.IsPublished;
+        currentPoll.StartsAt = poll.StartsAt;
+        currentPoll.EndsAt = poll.EndsAt;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var poll = await GetAsync(id, cancellationToken);
+        if (poll is null)
+            return false;
+
+        _context.Polls.Remove(poll);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> TogglePublishStatusAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var currentPoll = await GetAsync(id, cancellationToken);
+        if (currentPoll is null)
+            return false;
+
+        currentPoll.IsPublished = !currentPoll.IsPublished;
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

@@ -1,12 +1,13 @@
-﻿
+﻿using SurveyBasket.Api.Entities;
+
 namespace SurveyBasket.Api.Services;
 
 public interface IPollService
 {
-    public IEnumerable<Poll> GetAll();
-    public Poll? Get(int id);
-    public Poll Add(Poll poll);
-    public bool Update(int id, Poll poll);
-    public bool Delete(int id);
-
+    Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<Poll?> GetAsync(int id, CancellationToken cancellationToken = default);
+    Task<Poll> AddAsync(Poll poll, CancellationToken cancellationToken = default);
+    Task<bool> UpdateAsync(int id, Poll poll, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> TogglePublishStatusAsync(int id, CancellationToken cancellationToken = default);
 }
