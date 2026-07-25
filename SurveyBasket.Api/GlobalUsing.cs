@@ -9,3 +9,6 @@ global using FluentValidation;
 global using SurveyBasket.Api.Contracts.Requests;
 global using FluentValidation.AspNetCore;
 global using SurveyBasket.Api;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.AspNetCore.Identity;
