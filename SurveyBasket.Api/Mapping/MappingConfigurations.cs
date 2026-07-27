@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Api.Contracts.Requests;
+﻿using SurveyBasket.Api.Contracts.Polls;
 using SurveyBasket.Api.Entities;
 
 namespace SurveyBasket.Api.Mapping;

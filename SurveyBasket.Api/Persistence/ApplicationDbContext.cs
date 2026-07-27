@@ -3,7 +3,7 @@ using SurveyBasket.Api.Entities;
 
 namespace SurveyBasket.Api.Persistence;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Poll> Polls => Set<Poll>();
 

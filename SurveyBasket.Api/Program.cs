@@ -17,6 +17,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();   // who are you? — validates JWT, fills HttpContext.User
+app.UseAuthorization();    // what can you do? — enforces [Authorize]
+
 app.MapControllers();
 
 app.Run();
