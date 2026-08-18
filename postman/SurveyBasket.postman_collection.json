@@ -1,0 +1,97 @@
+{
+  "info": {
+    "name": "SurveyBasket.Api",
+    "description": "Import this collection + the Local environment.\n\nSetup:\n1. Import both JSON files from D:\\SurveyBasket\\postman\n2. Select environment **SurveyBasket - Local** (top-right)\n3. Postman → Settings → General → turn OFF **SSL certificate verification** (local dev cert)\n4. Run **Auth / Login** first — it saves the JWT into {{token}}\n5. All Polls requests inherit Bearer {{token}} automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    pm.environment.set('token', data.token);",
+                  "    pm.test('Token saved to environment', () => pm.expect(data.token).to.be.a('string'));",
+                  "} else {",
+                  "    pm.test('Login failed', () => pm.expect.fail('Expected 200 from POST /Auth'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohammed@survey-basket.com\",\n  \"password\": \"P@ssword123\"\n}"
+            },
+            "url": "{{baseUrl}}/Auth"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polls",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/Polls"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My Poll\",\n  \"summary\": \"A test poll from Postman\",\n  \"isPublished\": false,\n  \"startsAt\": \"2026-08-19\",\n  \"endsAt\": \"2026-08-20\"\n}"
+            },
+            "url": "{{baseUrl}}/api/Polls"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/Polls/1"
+          }
+        }
+      ]
+    }
+  ]
+}

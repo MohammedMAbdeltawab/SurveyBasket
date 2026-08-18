@@ -15,7 +15,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Skip HTTPS redirect in Development — otherwise Postman/curl on http://localhost:5005
+// gets 307 → https and the Authorization header is dropped → 401.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();   // who are you? — validates JWT, fills HttpContext.User
 app.UseAuthorization();    // what can you do? — enforces [Authorize]

@@ -17,3 +17,8 @@ global using SurveyBasket.Api.Authentication;
 global using SurveyBasket.Api.Services.Authentication;
 global using SurveyBasket.Api.Services.Polls;
 global using SurveyBasket.Api.Contracts.Authentication;
+
+global using Microsoft.Extensions.Options;
+global using Microsoft.IdentityModel.Tokens;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;

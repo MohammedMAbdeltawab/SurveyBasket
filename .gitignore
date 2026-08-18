@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 tools/UserSeeder/bin/
 tools/UserSeeder/obj/
+token.json
